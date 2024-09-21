@@ -2,7 +2,8 @@ import flet as ft
 from dataclasses import dataclass
 
 from message import Message, ChatMessage
-from assistantLocal01 import AssistantLocal01
+# from assistantLocal01 import AssistantLocal01
+from assistantTest import AssistantLocal01
 
 
 class ChatView(ft.ListView):
