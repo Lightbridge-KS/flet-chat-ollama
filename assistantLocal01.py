@@ -30,7 +30,8 @@ class AssistantLocal01:
             # Setting the response from OpenAI API
             response= client.chat.completions.create(
                 model=model_llm,
-                messages= self.messages # Full Message
+                messages= self.messages, # Full Message
+                stream=False
             )
  
             # returning the response
@@ -47,6 +48,6 @@ class AssistantLocal01:
 
 if __name__ == "__main__":
     a1 = AssistantLocal01()
-    a1.get_response("Hello")
+    a1.get_response("Who are you?")
     # a1.get_response("What is my name?")
     
