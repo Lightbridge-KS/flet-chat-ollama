@@ -22,9 +22,7 @@ class ChatMessage(ft.UserControl):
         )
         msg_bubble = ft.Container(
                                 ft.Markdown(
-                                        self.message.text, selectable=True, 
-                                        extension_set=ft.MarkdownExtensionSet.GITHUB_WEB,
-                                        code_theme=ft.MarkdownCodeTheme.GITHUB
+                                        self.message.text, selectable=True
                                 ),
                                 bgcolor=ft.colors.GREEN_200,
                                 theme_mode=ft.ThemeMode.LIGHT,
