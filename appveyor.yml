@@ -1,0 +1,55 @@
+image:
+- Visual Studio 2019
+- macOS
+
+skip_branch_with_pr: true
+stack: python 3.10
+
+environment:
+  GITHUB_TOKEN:
+    secure: cq5sCIvjUPBY6V+SOp37WeKJILTfKcEjgjq/TrZb1ht2O8/PRr6UFC8iWrDwhdTiG/Tom0vukBnxZ1byfwKB55nV+N9fKOvvh85LCJ0E1R3FpaICXZFL4VywtmuwoqdD
+    
+install:
+- pip install -r requirements.txt
+- pip install pyinstaller pillow
+
+build_script:
+- flet pack main.py --name ChatOllama --icon assets/icon.png --product-name ChatOllama --product-version "0.0.1" --copyright "Copyright (c) 2024 Lightbridge-KS."
+
+test: off
+
+# Publish artifacts to GitHub Releases on "tag" builds
+deploy:
+  provider: GitHub
+  auth_token: $(GITHUB_TOKEN)
+  on:
+    APPVEYOR_REPO_TAG: true
+
+#
+#   Windows package
+# 
+for:
+-
+  matrix:
+    only:
+    - image: Visual Studio 2019
+
+  after_build:
+  - 7z a ChatOllama-windows.zip %CD%\dist\*.exe
+
+  artifacts:
+  - path: ChatOllama-windows.zip
+
+#
+#   macOS package
+# 
+-
+  matrix:
+    only:
+    - image: macOS
+
+  after_build:
+  - tar -czvf ChatOllama-macos.tar.gz -C dist ChatOllama.app
+
+  artifacts:
+  - path: ChatOllama-macos.tar.gz
