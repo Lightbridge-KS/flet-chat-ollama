@@ -21,6 +21,7 @@ class ChatMessage(ft.UserControl):
             bgcolor=self.get_avatar_color(self.message.user_name),
         )
         msg_bubble = ft.Container(
+                                #   ft.Text(self.message.text, selectable=True),
                                 ft.Markdown(
                                         self.message.text, selectable=True
                                 ),
