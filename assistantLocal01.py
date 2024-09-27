@@ -3,7 +3,7 @@ import openai
 from openai import OpenAI
 
 
-model_llm = "phi3.5"
+model_llm = "llama3.2:3b"
 
 client = OpenAI(
         base_url="http://localhost:11434/v1",
