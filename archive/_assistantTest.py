@@ -1,6 +1,6 @@
 import os
 
-class AssistantLocal01:
+class Assistant:
     def __init__(self):
         self.messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -18,6 +18,6 @@ class AssistantLocal01:
     
 
 if __name__ == "__main__":
-    a1 = AssistantLocal01()
+    a1 = Assistant()
     a1.get_response("Hello")
     

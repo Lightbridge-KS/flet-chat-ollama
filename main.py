@@ -2,7 +2,17 @@ from dataclasses import dataclass
 import flet as ft
 
 from message import Message, ChatMessage
-from assistantLocal01 import AssistantLocal01
+from message_st import MessageStream, ChatMessageStream
+# from assistant_local_openai import Assistant
+from assistant_local_ollama import Assistant
+
+# Generator function that yields each letter from "HELLO" with a delay
+def hello_generator():
+    import time
+    word = "HELLO"
+    for letter in word:
+        yield letter
+        time.sleep(0.5)
 
 class ChatView(ft.ListView):
     def __init__(self):
@@ -45,17 +55,33 @@ def main(page: ft.Page):
         
     #     chat.controls.append(m)
     #     page.update()
+    
 
-    def on_message(message: Message):
+    def on_message(message: Message | MessageStream):
         match message.message_type:
             case "chat_message":
                 m = ChatMessage(message)
+                chat.controls.append(m)
+            case "chat_message_stream":
+                # [TODO] Implement real one
+                m = ChatMessageStream(message)
+                
+                # m = ft.Container(
+                #         content= ft.Text("", size=12, color = ft.colors.RED),  # Initially empty
+                #         bgcolor= ft.colors.WHITE
+                # )
+                chat.controls.append(m)
+                
+                for chunk in message.ai_stream:
+                    text_token = chunk["message"]["content"]
+                    m.set_chat_msg(text_token)
+                    # page.update()  # Update the page to reflect the changes in real-time
+
+                
             case "login_message":
                 m = ft.Text(message.text, italic=True, color=ft.colors.BLACK45, size=12)
-            case "generate_message":
-                m = ft.Text(message.text, italic=True, color=ft.colors.BLACK26, size=12)
+                chat.controls.append(m)
         
-        chat.controls.append(m)
         page.update()
 
     page.pubsub.subscribe(on_message)
@@ -75,26 +101,20 @@ def main(page: ft.Page):
             ### Clear the content in message box
             human_msg = new_message.value
             new_message.value = ""
-            ## Asking user to Wait till we get our response
-            ### [TODO]: Make it stream !!!
-            # page.pubsub.send_all(
-            #     Message(
-            #         user_name="AI", 
-            #         text="AI is generating", 
-            #         message_type="generate_message"
-            #     )
-            # )
             
-            ## Fetching the AI response get_response
-            ai_response = assistantLocal01.get_response(str(human_msg))
-            ## Sent AI Message
+            ## Fetching the AI response (Generator Object)
+            ai_stream = assistant.get_stream(str(human_msg))
+            # ai_stream_test = hello_generator()
+            
+            ## Sent AI Message 
             page.pubsub.send_all(
-                Message(
-                    "AI", 
-                    str(ai_response).lstrip(), 
-                    message_type="chat_message"
+                MessageStream(
+                "AI", 
+                ai_stream, # ai_stream A Generator 
+                message_type="chat_message_stream"
                 )
             )
+
             
             
             new_message.focus()
@@ -135,7 +155,7 @@ def main(page: ft.Page):
     )
     
     # Creating LLM Assistance
-    assistantLocal01 = AssistantLocal01()
+    assistant = Assistant()
 
     # New MSG box at the bottom
     new_message = ft.TextField(

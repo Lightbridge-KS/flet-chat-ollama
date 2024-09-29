@@ -2,8 +2,8 @@ import flet as ft
 from dataclasses import dataclass
 
 from message import Message, ChatMessage
-from assistantLocal01 import AssistantLocal01
-# from assistantTest import AssistantLocal01
+from assistant_local_openai import Assistant
+# from assistantTest import Assistant
 
 
 class ChatView(ft.ListView):
@@ -32,7 +32,7 @@ def main(page: ft.Page):
     # )
     
     # Creating LLM Assistance
-    assistantLocal01 = AssistantLocal01()
+    Assistant = Assistant()
 
     def join_chat_click(e):
         # If not provide give Anonymous name
@@ -76,7 +76,7 @@ def main(page: ft.Page):
             )
             
             ## Fetching the AI response get_response
-            ai_response = assistantLocal01.get_response(str(human_msg))
+            ai_response = Assistant.get_response(str(human_msg))
             ## Sent AI Message
             page.pubsub.send_all(
                 Message(

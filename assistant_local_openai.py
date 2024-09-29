@@ -3,7 +3,7 @@ import openai
 from openai import OpenAI
 
 
-model_llm = "llama3.2:3b"
+model = "llama3.2:3b"
 
 client = OpenAI(
         base_url="http://localhost:11434/v1",
@@ -11,7 +11,7 @@ client = OpenAI(
 )
 
 
-class AssistantLocal01:
+class Assistant:
     def __init__(self):
         self.messages = [
             {"role": "system", "content": "You are a helpful assistant."},
@@ -29,9 +29,10 @@ class AssistantLocal01:
 
             # Setting the response from OpenAI API
             response= client.chat.completions.create(
-                model=model_llm,
+                model=model,
                 messages= self.messages, # Full Message
-                stream=False
+                stream=False,
+                temperature = 0
             )
  
             # returning the response
@@ -47,7 +48,7 @@ class AssistantLocal01:
     
 
 if __name__ == "__main__":
-    a1 = AssistantLocal01()
+    a1 = Assistant()
     a1.get_response("Who are you?")
     # a1.get_response("What is my name?")
     
