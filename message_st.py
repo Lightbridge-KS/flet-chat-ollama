@@ -7,6 +7,12 @@ from typing import Generator
 import flet as ft
 
 @dataclass
+class Message:
+    user_name: str
+    text: str | Generator[str, None, None]
+    message_type: str
+
+@dataclass
 class MessageStream:
     user_name: str
     ai_stream: Generator[str, None, None]

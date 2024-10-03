@@ -1,8 +1,9 @@
 from dataclasses import dataclass
+import time
 import flet as ft
 
-from message import Message, ChatMessage
-from message_st import MessageStream, ChatMessageStream
+from message import ChatMessage
+from message_st import Message, MessageStream, ChatMessageStream
 # from assistant_local_openai import Assistant
 from assistant_local_ollama import Assistant
 
@@ -41,21 +42,7 @@ def main(page: ft.Page):
     
     chat = ChatView()
     
-    # def on_message(message: Message):
-    #     match message.message_type:
-    #          case "chat_message":
-    #             # m = ft.Text(f"{message.user_name}: {message.text}", selectable=True)              
-    #             m = ft.Markdown(f"{message.user_name}: {message.text}", 
-    #                              selectable=True
-    #                              )              
-    #          case "login_message":
-    #              m = ft.Text(message.text, italic=True, color=ft.colors.BLACK45, size=12)
-    #          case "generate_message":
-    #              m = ft.Text(message.text, italic=True, color=ft.colors.BLACK26, size=12)
-        
-    #     chat.controls.append(m)
-    #     page.update()
-    
+
 
     def on_message(message: Message | MessageStream):
         match message.message_type:
@@ -65,17 +52,13 @@ def main(page: ft.Page):
             case "chat_message_stream":
                 # [TODO] Implement real one
                 m = ChatMessageStream(message)
-                
-                # m = ft.Container(
-                #         content= ft.Text("", size=12, color = ft.colors.RED),  # Initially empty
-                #         bgcolor= ft.colors.WHITE
-                # )
                 chat.controls.append(m)
+                page.update()
                 
                 for chunk in message.ai_stream:
                     text_token = chunk["message"]["content"]
                     m.set_chat_msg(text_token)
-                    # page.update()  # Update the page to reflect the changes in real-time
+                    page.update()  # Update the page to reflect the changes in real-time
 
                 
             case "login_message":
@@ -105,6 +88,7 @@ def main(page: ft.Page):
             ## Fetching the AI response (Generator Object)
             ai_stream = assistant.get_stream(str(human_msg))
             # ai_stream_test = hello_generator()
+            time.sleep(0.25)
             
             ## Sent AI Message 
             page.pubsub.send_all(

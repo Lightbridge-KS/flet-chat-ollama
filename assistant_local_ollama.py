@@ -7,7 +7,7 @@ model = "llama3.2:3b"
 class Assistant:
     def __init__(self):
         self.messages = [
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "You are a helpful radiology assistant."},
         ]
     def get_stream(self, user_text):
         self.user_text = user_text
@@ -18,7 +18,10 @@ class Assistant:
             # Getting Stream Generator Object
             stream = client.chat(model=model, 
                                  stream=True,
-                                 messages=[{"role": "user", "content": self.user_text}]
+                                 messages=[
+                                     {"role": "system", "content": "You are a helpful radiology assistant."},
+                                     {"role": "user", "content": self.user_text}
+                                ]
                                 )
             return stream
         
