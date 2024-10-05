@@ -30,6 +30,8 @@ class MessageUser(MessageStatic):
 # ChatMessage with Streaming
 
 class ChatMessageStream(ft.ResponsiveRow):
+    """ChatMessage with Streaming for AI"""
+    
     def __init__(self, message: MessageStream):
         super().__init__()
         self.message = message
@@ -79,6 +81,7 @@ class ChatMessageStream(ft.ResponsiveRow):
 # Static Chat Message
 
 class ChatMessageStatic(ft.ResponsiveRow):
+    """Static ChatMessage for Human"""
     
     def __init__(self, message: MessageUser):
         super().__init__()
@@ -94,7 +97,7 @@ class ChatMessageStatic(ft.ResponsiveRow):
                                 ft.Markdown(
                                         self.message.text, selectable=True
                                 ),
-                                bgcolor=ft.colors.GREEN_200,
+                                bgcolor=ft.colors.BLUE_200,
                                 theme_mode=ft.ThemeMode.LIGHT,
                                 border_radius=10,
                                 margin=10,
@@ -102,15 +105,16 @@ class ChatMessageStatic(ft.ResponsiveRow):
                     )
         
         self.controls = [
-                ft.Column(col=1, controls=[self.circle_avatar]),
                 ft.Column(col=10,
-                    controls = [ft.Text(self.message.user_name, weight="bold"),
-                    self.msg_bubble],
+                    controls = [ft.Text(self.message.user_name, weight="bold"), self.msg_bubble],
                     tight=True,
-                    spacing=5,
-                )
+                    spacing=5, 
+                    horizontal_alignment = ft.CrossAxisAlignment.END
+                ),
+                ft.Column(col=1, controls=[self.circle_avatar])
             ]
         self.vertical_alignment = ft.CrossAxisAlignment.START
+        self.alignment = ft.MainAxisAlignment.END
         
     @staticmethod
     def get_initials(user_name: str):
