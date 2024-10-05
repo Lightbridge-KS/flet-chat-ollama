@@ -29,7 +29,7 @@ class MessageUser(MessageStatic):
 
 # ChatMessage with Streaming
 
-class ChatMessageStream(ft.UserControl):
+class ChatMessageStream(ft.ResponsiveRow):
     def __init__(self, message: MessageStream):
         super().__init__()
         self.message = message
@@ -50,18 +50,7 @@ class ChatMessageStream(ft.UserControl):
                                 margin=10,
                                 padding=10,
         )
-        
-
-    
-    def set_chat_msg(self, msg):
-        self.msg_bubble.content.value += msg
-        self.msg_bubble.update()
-
-    
-    def build(self):  
-            
-        rr = ft.ResponsiveRow(
-            controls = [
+        self.controls = [
                 ft.Column(col=1, controls=[self.circle_avatar]),
                 ft.Column(col=10,
                     controls = [
@@ -71,13 +60,13 @@ class ChatMessageStream(ft.UserControl):
                     tight=True,
                     spacing=5,
                 )
-            ],
-            vertical_alignment = ft.CrossAxisAlignment.START,
-        )
+            ]
+        self.vertical_alignment = ft.CrossAxisAlignment.START
         
-        return rr
-    
-    
+    def set_chat_msg(self, msg):
+        self.msg_bubble.content.value += msg
+        self.msg_bubble.update()
+        
     @staticmethod
     def get_initials(user_name: str):
         return get_initials(user_name)
@@ -89,20 +78,18 @@ class ChatMessageStream(ft.UserControl):
 
 # Static Chat Message
 
-    
-class ChatMessageStatic(ft.UserControl):
+class ChatMessageStatic(ft.ResponsiveRow):
     
     def __init__(self, message: MessageUser):
         super().__init__()
         self.message = message
-    
-    def build(self):
-        circle_avatar = ft.CircleAvatar(
+        
+        self.circle_avatar = ft.CircleAvatar(
             content=ft.Text(self.get_initials(self.message.user_name)),
             color=ft.colors.WHITE,
             bgcolor=self.get_avatar_color(self.message.user_name),
         )
-        msg_bubble = ft.Container(
+        self.msg_bubble = ft.Container(
                                 #   ft.Text(self.message.text, selectable=True),
                                 ft.Markdown(
                                         self.message.text, selectable=True
@@ -114,27 +101,22 @@ class ChatMessageStatic(ft.UserControl):
                                 padding=10,
                     )
         
-        
-        rr = ft.ResponsiveRow(
-            controls = [
-                ft.Column(col=1, controls=[circle_avatar]),
+        self.controls = [
+                ft.Column(col=1, controls=[self.circle_avatar]),
                 ft.Column(col=10,
                     controls = [ft.Text(self.message.user_name, weight="bold"),
-                    msg_bubble],
+                    self.msg_bubble],
                     tight=True,
                     spacing=5,
                 )
-            ],
-            vertical_alignment = ft.CrossAxisAlignment.START,
-        )
+            ]
+        self.vertical_alignment = ft.CrossAxisAlignment.START
         
-        return rr
-    
-    
     @staticmethod
     def get_initials(user_name: str):
         return get_initials(user_name)
         
     @staticmethod
     def get_avatar_color(user_name: str):
-        return get_avatar_color(user_name)
+        return get_avatar_color(user_name)    
+    
