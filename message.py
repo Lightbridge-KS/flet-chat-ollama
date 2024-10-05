@@ -93,7 +93,7 @@ class ChatMessageStatic(ft.ResponsiveRow):
             bgcolor=self.get_avatar_color(self.message.user_name),
         )
         self.msg_bubble = ft.Container(
-                                #   ft.Text(self.message.text, selectable=True),
+                                # ft.Text(self.message.text, selectable=True),
                                 ft.Markdown(
                                         self.message.text, selectable=True
                                 ),

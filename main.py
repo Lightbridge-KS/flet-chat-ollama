@@ -14,7 +14,6 @@ class ChatView(ft.ListView):
         self.clip_behavior = ft.ClipBehavior.ANTI_ALIAS
 
 
-
 def main(page: ft.Page):
     
     page.horizontal_alignment = ft.CrossAxisAlignment.STRETCH
@@ -30,10 +29,14 @@ def main(page: ft.Page):
         bgcolor=ft.colors.SURFACE_VARIANT,
         middle=ft.Text("LLM Chat", weight=ft.FontWeight.BOLD),
     )
-    
+    # Creating LLM Assistance
+    assistant = Assistant(system_prompt="You are a helpful assistant.")
+    # Chat History
+    chat_hx_list = [{"role": "system", "content": assistant.system_prompt}]
+    page.client_storage.set("CHAT_HISTORY", chat_hx_list)
+    # Chat View
     chat = ChatView()
     
-
 
     def on_message(message: MessageLogin | MessageUser | MessageStream):
         match message:
@@ -41,15 +44,29 @@ def main(page: ft.Page):
             case MessageUser():
                 m = ChatMessageStatic(message)
                 chat.controls.append(m)
+                
             case MessageStream():
+                
                 m = ChatMessageStream(message)
                 chat.controls.append(m)
                 page.update()
                 
+                text_msg_list = []
+                
                 for chunk in message.ai_stream:
                     text_token = chunk["message"]["content"]
+                    # Set to Display
                     m.set_chat_msg(text_token)
-                    page.update()  # Update the page to reflect the changes in real-time
+                    
+                    # For ChatHistory
+                    text_msg_list.append(text_token)
+                
+                # Append Chat History
+                text_msg = "".join(text_msg_list)
+                chat_hx_list = page.client_storage.get("CHAT_HISTORY")
+                chat_hx_list.append({"role": "assistant", "content": text_msg})
+                page.client_storage.set("CHAT_HISTORY", chat_hx_list)
+                
                 
             case MessageLogin():
                 m = ft.Text(message.text, italic=True, color=ft.colors.BLACK45, size=12)
@@ -63,6 +80,13 @@ def main(page: ft.Page):
     def send_message_click(e):
         if new_message.value != "":
             
+            ### Get Human Message and append chat history
+            human_msg = new_message.value
+            
+            chat_hx_list = page.client_storage.get("CHAT_HISTORY")
+            chat_hx_list.append({"role": "user", "content": human_msg})
+            page.client_storage.set("CHAT_HISTORY", chat_hx_list)
+            
             ## Send User Message
             page.pubsub.send_all(
                 MessageUser(
@@ -70,12 +94,13 @@ def main(page: ft.Page):
                     new_message.value
                 )
             )
+        
             ### Clear the content in message box
-            human_msg = new_message.value
             new_message.value = ""
             
             ## Fetching the AI response (Generator Object)
-            ai_stream = assistant.get_stream(str(human_msg))
+            chat_hx_list = page.client_storage.get("CHAT_HISTORY")
+            ai_stream = assistant.get_stream_from_history(chat_hx_list)
             time.sleep(0.25)
             
             ## Sent AI Message 
@@ -122,8 +147,7 @@ def main(page: ft.Page):
         actions_alignment=ft.MainAxisAlignment.END, # "end"
     )
     
-    # Creating LLM Assistance
-    assistant = Assistant()
+
 
     # New MSG box at the bottom
     new_message = ft.TextField(
