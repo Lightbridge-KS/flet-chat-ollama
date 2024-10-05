@@ -1,8 +1,8 @@
 import flet as ft
 from dataclasses import dataclass
 
-from message import Message, ChatMessage
-from assistant_local_openai import Assistant
+from archive._message import Message, ChatMessage
+from _collection.assistant_local_openai import Assistant
 # from assistantTest import Assistant
 
 
