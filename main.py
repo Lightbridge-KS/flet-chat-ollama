@@ -3,7 +3,8 @@ import time
 import flet as ft
 
 from message import ChatMessageStatic, ChatMessageStream, MessageLogin, MessageUser, MessageStream
-from assistant_local_ollama import Assistant
+# from assistant_local_ollama import Assistant
+from assistant_local_openai import Assistant
 
 
 class ChatView(ft.ListView):
@@ -54,7 +55,12 @@ def main(page: ft.Page):
                 text_msg_list = []
                 
                 for chunk in message.ai_stream:
-                    text_token = chunk["message"]["content"]
+                    
+                    if assistant.api_type == "ollama":
+                        text_token = chunk["message"]["content"] # For Ollama
+                        
+                    if assistant.api_type == "openai":
+                        text_token = chunk.choices[0].delta.content 
                     # Set to Display
                     m.set_chat_msg(text_token)
                     

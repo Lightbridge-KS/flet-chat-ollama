@@ -2,7 +2,7 @@ import flet as ft
 from dataclasses import dataclass
 
 from archive._message import Message, ChatMessage
-from _collection.assistant_local_openai import Assistant
+from _collection.assistant_local_openai_regular import Assistant
 # from assistantTest import Assistant
 
 
